@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base th:href="@{/}" />
+    <title>Document</title>
+    <link rel="stylesheet" href="static/css/index.css" />
+
+</head>
+<body>
+<div class="w">
+    <div class="header">
+        <a href="findUserList">
+            <button>点击展示用户信息</button>
+        </a>
+    </div>
+
+    <div class="main">
+        <table>
+            <th>
+                <td>序号</td>
+                <td>ID号</td>
+                <td>用户名</td>
+                <td>邮箱</td>
+                <td>操作</td>
+            </th>
+            <tr th:if="${#lists.isEmpty(userList)}">
+                <td colspan="5">请添加用户信息</td>
+            </tr>
+            <tr th:each="user,status : ${userList}">
+                <td th:text="${status.index} + 1"></td>
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.username}"></td>
+                <td th:text="${user.password}"></td>
+                <td>
+                    <a th:href="@{/editUser(id=${user.id})}">编辑</a>
+                    <a th:href="@{/deleteUser(id=${user.id})}">删除</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="session">
+        <form class="login" method="post" action="addUser">
+            <div>
+                <label for="username">用户名：</label>
+                <input type="text" id="username" name="username">
+            </div>
+            <div>
+                <label for="password">密码：</label>
+                <input type="text" id="password" name="password">
+            </div>
+            <div>
+                <label for="email">邮箱：</label>
+                <input type="text" id="email" name="email">
+            </div>
+            <button type="submit">添加用户</button>
+        </form>
+    </div>
+
+    <div class="session">
+        <form class="login" method="post" action="updateUser" th:if="${dbUser!=null}">
+            <div>
+                <input type="hidden"  name="id"  th:value="${dbUser.id}">
+            </div>
+            <div>
+                <label >用户名：</label>
+                <input type="text"  name="username" th:value="${dbUser.username}">
+            </div>
+            <div>
+                <label for="password">密码：</label>
+                <input type="text"  name="password" >
+            </div>
+            <div>
+                <label for="email">邮箱：</label>
+                <input type="text" name="email" th:value="${dbUser.email}">
+            </div>
+            <button type="submit">更新用户</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
