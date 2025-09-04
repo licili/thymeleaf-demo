@@ -20,28 +20,8 @@ import java.util.List;
  */
 
 @WebServlet("/user")
-public class UserServlet extends ViewBaseServlet {
+public class UserServlet extends BaseServlet {
     private UserService userService = new UserServiceImpl();
-    private final String METHOD = "method";
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doPost(req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String method = req.getParameter(METHOD);
-
-        if("addUser".equals(method)) {
-            addUser(req, resp);
-        } else if("editUser".equals(method)) {
-            editUser(req, resp);
-        } else if("updateUser".equals(method)) {
-            updateUser(req, resp);
-        } else if("findUserList".equals(method)) {
-            findUserList(req, resp);
-        }
-    }
 
     private void findUserList(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<User> list = userService.findAllUserList();
