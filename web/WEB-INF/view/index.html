@@ -11,7 +11,7 @@
 <body>
 <div class="w">
     <div class="header">
-        <a href="findUserList">
+        <a href="user?method=findUserList">
             <button>点击展示用户信息</button>
         </a>
     </div>
@@ -34,15 +34,15 @@
                 <td th:text="${user.username}"></td>
                 <td th:text="${user.password}"></td>
                 <td>
-                    <a th:href="@{/editUser(id=${user.id})}">编辑</a>
-                    <a th:href="@{/deleteUser(id=${user.id})}">删除</a>
+                    <a th:href="@{/user(method=editUser,id=${user.id})}">编辑</a>
+                    <a th:href="@{/user(method=deleteUser,id=${user.id})}">删除</a>
                 </td>
             </tr>
         </table>
     </div>
 
     <div class="session">
-        <form class="login" method="post" action="addUser">
+        <form class="login" method="post" action="user?method=addUser">
             <div>
                 <label for="username">用户名：</label>
                 <input type="text" id="username" name="username">
@@ -60,7 +60,7 @@
     </div>
 
     <div class="session">
-        <form class="login" method="post" action="updateUser" th:if="${dbUser!=null}">
+        <form class="login" method="post" action="user?method=updateUser" th:if="${dbUser!=null}">
             <div>
                 <input type="hidden"  name="id"  th:value="${dbUser.id}">
             </div>
