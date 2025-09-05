@@ -1,5 +1,6 @@
 package com.lee.controller;
 
+import com.lee.annotations.RequestMapping;
 import com.lee.pojo.User;
 import com.lee.services.UserService;
 import com.lee.services.impl.UserServiceImpl;
@@ -19,17 +20,20 @@ import java.util.List;
  * @Description:
  */
 
-@WebServlet("/user")
+@WebServlet("/user/*")
 public class UserServlet extends BaseServlet {
     private UserService userService = new UserServiceImpl();
 
+    @RequestMapping("/findUserList")
     private void findUserList(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        System.out.println("执行 findUserList");
         List<User> list = userService.findAllUserList();
 
         req.setAttribute("userList", list);
         this.processTemplate("index", req, resp);
     }
 
+    @RequestMapping("/updateUser")
     private void updateUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         User user = new User();
         try {
@@ -39,9 +43,10 @@ public class UserServlet extends BaseServlet {
         }
 
         boolean flag = userService.updateUser(user);
-        resp.sendRedirect(req.getContextPath() + "/user?method=findUserList");
+        resp.sendRedirect(req.getContextPath() + "/user/findUserList");
     }
 
+    @RequestMapping("/editUser")
     private void editUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String id = req.getParameter("id");
         User dbUser = userService.queryUserById(Integer.valueOf(id));
@@ -49,6 +54,7 @@ public class UserServlet extends BaseServlet {
         this.processTemplate("index", req, resp);
     }
 
+    @RequestMapping("/addUser")
     private void addUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         User user = new User();
         try {
@@ -58,6 +64,6 @@ public class UserServlet extends BaseServlet {
         }
 
         boolean flag = userService.addUser(user);
-        resp.sendRedirect(req.getContextPath() + "/user?method=findUserList");
+        resp.sendRedirect(req.getContextPath() + "/user/findUserList");
     }
 }
