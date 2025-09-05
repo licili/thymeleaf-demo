@@ -1,5 +1,7 @@
 package com.lee.controller;
 
+import com.lee.annotations.RequestMapping;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,21 +24,33 @@ public class BaseServlet extends ViewBaseServlet{
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String methodName = req.getParameter(METHOD);
+        // /user/findUserList
 
+
+        String pathInfo = req.getPathInfo();
+        System.out.println("pathInfo = " + pathInfo);
         Class<? extends BaseServlet> clazz = this.getClass();
-
         Method[] declaredMethods = clazz.getDeclaredMethods();
 
         for (Method declareMethod : declaredMethods) {
-             if(declareMethod.getName().equals(methodName)) {
-                 try {
-                     declareMethod.setAccessible(true);
-                     declareMethod.invoke(this, req, resp);
-                 } catch (Exception e) {
-                     throw new RuntimeException(e);
+             try {
+                 // 被 @RequestMapping 注解标记
+                 if(declareMethod.isAnnotationPresent(RequestMapping.class)) {
+                     // 获取注解内容
+                     RequestMapping requestMapping = declareMethod.getDeclaredAnnotation(RequestMapping.class);
+                     // 获取了注解的请求路径
+                     String requestPath = requestMapping.value();
+
+                     if(requestPath.equals(pathInfo)) {
+                         declareMethod.setAccessible(true);
+                         declareMethod.invoke(this, req, resp);
+                         break;
+                     }
                  }
+             } catch (Exception e) {
+                 throw new RuntimeException(e);
              }
         }
+        resp.setStatus(404);
     }
 }
