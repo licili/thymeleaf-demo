@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="static/css/index.css" />
+
+</head>
+<body>
+<div class="w" id="app">
+    <div class="main">
+        <table>
+            <th>
+            <td>序号</td>
+            <td>ID号</td>
+            <td>用户名</td>
+            <td>邮箱</td>
+            <td>操作</td>
+            </th>
+            <tr v-if="userList.length == 0">
+                <td colspan="5">请添加用户信息</td>
+            </tr>
+            <tr v-for="(item, index) in userList">
+                <td>{{index + 1}}</td>
+                <td>{{item.id}}</td>
+                <td>{{item.username}}</td>
+                <td>{{item.email}}</td>
+                <td>
+                    <a @click.prevent="editUser(item)">编辑</a>
+                    <a @click.prevent="deleteUser">删除</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="session">
+        <form class="login" method="post">
+            <div>
+                <label for="username" >用户名：</label>
+                <input type="text" id="username" name="username" v-model="user.username">
+            </div>
+            <div>
+                <label for="password">密码：</label>
+                <input type="text" id="password" name="password" v-model="user.password">
+            </div>
+            <div>
+                <label for="email">邮箱：</label>
+                <input type="text" id="email" name="email" v-model="user.email">
+            </div>
+            <button type="submit" @click.prevent="addUser">添加用户</button>
+        </form>
+    </div>
+
+    <div class="session">
+        <form class="login" method="post">
+            <div>
+                <input type="hidden"  name="id" v-model="updateUser.id">
+            </div>
+            <div>
+                <label >用户名：</label>
+                <input type="text"  name="username" v-model="updateUser.username">
+            </div>
+            <div>
+                <label for="password">密码：</label>
+                <input type="text"  name="password" v-model="updateUser.password">
+            </div>
+            <div>
+                <label for="email">邮箱：</label>
+                <input type="text" name="email" v-model="updateUser.email">
+            </div>
+            <button type="submit" @click.prevent="handleUpdate">更新用户</button>
+        </form>
+    </div>
+</div>
+<script src="static/scripts/axios.js"></script>
+<script src="static/scripts/vue.js"></script>
+<script>
+    const request = axios.create({
+        baseURL: "http://localhost:8080/thymeleaf-demo"
+    });
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                userList: [],
+                user: {
+                    username: "",
+                    password: "",
+                    email: ""
+                },
+                updateUser: {
+                    id: "",
+                    usernmae: "",
+                    password: "",
+                    email: ""
+                }
+
+            }
+        },
+        created() {
+          this.findUserList();
+        },
+        methods: {
+            findUserList() {
+                request.get("/user/getUserListByAxios").then(res => {
+                    const {flag, message, data:userList} = res.data;
+                    console.log(flag, message, userList)
+                    if(flag) {
+                        alert(message);
+                        this.userList = userList;
+                    }
+                },err => {
+                    console.log(err)
+                })
+            },
+            async addUser() {
+                const res = await request.post("/user/addUserByAxois", this.user);
+
+                if(res.data.flag) {
+                    alert(res.data.message);
+                    this.user = {
+                        username: "",
+                        password: "",
+                        email: ""
+                    };
+                    this.findUserList()
+                }
+
+            },
+            editUser(user) {
+                this.updateUser = {
+                    ...user,
+                    password: ""
+                }
+            },
+            async handleUpdate() {
+                const res = await request.post("/user/updateUserByAxois", this.updateUser);
+                if(res.data.flag) {
+                    alert(res.data.message);
+                    this.updateUser = {
+                        id: "",
+                        usernmae: "",
+                        password: "",
+                        email: ""
+                    };
+                    this.findUserList()
+                }
+            }
+        }
+    })
+</script>
+</body>
+</html>

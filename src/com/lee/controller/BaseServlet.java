@@ -51,6 +51,5 @@ public class BaseServlet extends ViewBaseServlet{
                  throw new RuntimeException(e);
              }
         }
-        resp.setStatus(404);
     }
 }
